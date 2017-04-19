@@ -39,5 +39,5 @@ echo "Pachyderm deployed and ready"
 
 rm ./check_ready.sh
 
-echo "Pulling docker image pachyderm/pachyderm_jupyter (size about 1 GB)..."
-docker pull pachyderm/pachyderm_jupyter
+#echo "Pulling docker image pachyderm/pachyderm_jupyter (size about 1 GB)..."
+#docker pull pachyderm/pachyderm_jupyter
