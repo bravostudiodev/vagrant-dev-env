@@ -10,7 +10,7 @@ sudo systemctl daemon-reload
 sudo systemctl restart kubelet
 sudo systemctl restart kube-apiserver.service
 
-#install socat (neede for port forwarding)
+#install socat (needed for port forwarding)
 echo "Installing socat utility ..."
 wget -q http://www.dest-unreach.org/socat/download/socat-1.7.3.2.tar.gz
 tar -xzvf ./socat-1.7.3.2.tar.gz 1> /dev/null

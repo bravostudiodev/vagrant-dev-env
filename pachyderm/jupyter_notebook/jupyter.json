@@ -1,0 +1,46 @@
+{
+  "service" : {
+    "internal_port": 8888,
+    "external_port": 30888
+  },
+  "transform": {
+    "image": "pachyderm/pachyderm_jupyter",
+    "cmd": [ "sh" ],
+    "stdin": [
+		"/opt/conda/bin/jupyter notebook"
+    ],
+    "env": {
+        "PASSWORD": "secret"
+    }
+  },
+  "parallelism_spec": {
+    "strategy": "CONSTANT",
+    "constant": 1
+  },
+  "inputs": [{
+      "name": "trips",
+      "commit": {
+        "repo": {
+            "name": "trips"
+        },
+        "id": "COMMIT_TRIPS"
+      }
+    },{
+      "name": "weather",
+      "commit": {
+        "repo": {
+            "name": "weather"
+        },
+        "id": "COMMIT_WEATHER"
+      }
+    },{
+      "name": "sales",
+      "commit": {
+        "repo": {
+            "name": "sales"
+        },
+        "id": "COMMIT_SALES"
+      }
+    }
+  ]
+}
