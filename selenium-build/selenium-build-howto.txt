@@ -1,0 +1,24 @@
+vagrant up
+vagrant ssh
+cd /shared
+
+git clone https://github.com/SeleniumHQ/buck.git
+pushd buck
+ant
+./bin/buck --help
+popd
+
+export PATH=/shared/buck/bin:$PATH
+
+git clone https://github.com/SeleniumHQ/selenium.git
+pushd selenium
+sed "s/SE_VERSION = '\(.*\)'/SE_VERSION = '\1-custom'/" SELENIUM_VERSION
+./go maven-install
+mkdir -p /shared/m2local/org/seleniumhq/
+cp -a ~/.m2/repository/org/seleniumhq/selenium /shared/m2local/org/seleniumhq/
+popd
+
+#https://github.com/SeleniumHQ/selenium/wiki/Building-WebDriver
+
+exit
+./deploy-selenium.sh 3.4.0-custom
