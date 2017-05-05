@@ -12,7 +12,7 @@ export PATH=/shared/buck/bin:$PATH
 
 git clone https://github.com/SeleniumHQ/selenium.git
 pushd selenium
-sed "s/SE_VERSION = '\(.*\)'/SE_VERSION = '\1-custom'/" SELENIUM_VERSION
+sed -i "s/SE_VERSION = '\(.*\)'/SE_VERSION = '\1-custom'/" SELENIUM_VERSION
 ./go maven-install
 mkdir -p /shared/m2local/org/seleniumhq/
 cp -a ~/.m2/repository/org/seleniumhq/selenium /shared/m2local/org/seleniumhq/

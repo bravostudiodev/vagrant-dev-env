@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
-pushd m2local/org/seleniumhq/selenium
+if [ "$1" == "" ]; then echo "Missing 1st argument - artifacts version"; exit 1; fi
+if [ "$2" == "" ]; then echo "Missing 2nd argument - local maven repository folder"; exit 1; fi
 
 VERSION="$1"
+pushd "$2/org/seleniumhq/selenium"
 GROUPID="org.seleniumhq.selenium"
 REPO_URL=https://artifactory.propelmedia.com/artifactory/libs-release-local
 DEPLOY_ARGS="deploy:deploy-file -DrepositoryId=afrepo-release -Durl=${REPO_URL} -DgroupId=${GROUPID} -Dversion=${VERSION}"
