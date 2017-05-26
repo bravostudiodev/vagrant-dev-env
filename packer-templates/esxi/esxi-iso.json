@@ -1,0 +1,67 @@
+{
+  "builders": [
+    {
+      "name": "virtualbox-esxi",
+      "vm_name": "virtualbox-esxi",
+      "type": "virtualbox-iso",
+      "headless": false,
+      "disk_size": "{{ user `disk_size` }}",
+      "guest_os_type": "Linux_64",
+      "guest_additions_mode": "disable",
+      "iso_url": "{{user `iso_path`}}",
+      "iso_checksum_type": "none",
+      "ssh_username": "root",
+      "ssh_password": "{{user `root_password`}}",
+      "ssh_wait_timeout": "60m",
+      "shutdown_command": "esxcli system maintenanceMode set -e true -t 0 ; esxcli system shutdown poweroff -d 10 -r 'Packer Shutdown' ; esxcli system maintenanceMode set -e false -t 0",
+      "http_directory": ".",
+      "boot_wait": "5s",
+      "vboxmanage": [
+        ["modifyvm", "{{.Name}}", "--memory", "4096"],
+        ["modifyvm", "{{.Name}}", "--cpus", "2"],
+        ["modifyvm", "{{.Name}}", "--nictype1", "82545EM", "--nic1", "nat"]
+      ],
+      "boot_command": [
+        "<enter><wait>O<wait> ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter>"
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "vagrant.pub",
+      "destination": "/etc/ssh/keys-root/authorized_keys"
+    },
+    {
+      "type": "shell",
+      "scripts": [
+        "scripts/esxi-settings.sh"
+      ]
+    },
+    {
+      "type": "file",
+      "source": "scripts/esxi-vnic-fix.sh",
+      "destination": "/etc/rc.local.d/local.sh"
+    },
+    {
+      "type": "shell",
+      "scripts": [
+        "scripts/esxi-cloning_configuration.sh"
+      ]
+    }
+  ],
+  "post-processors": [
+    [
+      {
+        "type": "vagrant",
+        "compression_level": 9,
+        "vagrantfile_template": "scripts/esxi-vagrantfile_template.rb"
+      }
+    ]
+  ],
+  "variables": {
+    "iso_path": "./iso/VMware-VMvisor-Installer-6.5.0-4564106.x86_64.iso",
+    "disk_size": "200960",
+    "root_password": "vagrant"
+  }
+}
