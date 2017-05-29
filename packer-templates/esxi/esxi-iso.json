@@ -40,7 +40,7 @@
     },
     {
       "type": "file",
-      "source": "scripts/esxi-vnic-fix.sh",
+      "source": "scripts/esxi-local.sh",
       "destination": "/etc/rc.local.d/local.sh"
     },
     {

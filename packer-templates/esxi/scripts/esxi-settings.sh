@@ -23,7 +23,4 @@ esxcli system permission set -i vagrant -r Admin
 # Remove unsupported SSHD option
 sed -e 's/^\(PrintLastLog .*\)$/#\1/' -i /etc/ssh/sshd_config
 
-# Authorize vagrant insecure key
-mkdir -p /etc/ssh/keys-vagrant
-cp /etc/ssh/keys-root/authorized_keys /etc/ssh/keys-vagrant/authorized_keys
-chown vagrant:vagrant -R /etc/ssh/keys-vagrant
+# vagrant insecure key is authorized on every boot in /etc/rc.d/local.sh

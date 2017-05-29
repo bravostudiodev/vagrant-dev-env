@@ -22,3 +22,12 @@ if [ "$vnic0_mac" != "$vmk0_mac" ] ; then
 
   esxcli network ip interface ipv4 set -i vmk0 -t dhcp
 fi
+
+
+# Authorize vagrant insecure key. This must be done on every boot because
+# ESXi will not preserve created folder/file accross reboots. One way to store file is this:
+# cp /some_file_to_be_preserved_accross_boots "$(cat /etc/vmware/locker.conf | cut -d ' ' -f 1)/"
+# but this is not needed here because keys-root content is preserved.
+mkdir -p /etc/ssh/keys-vagrant
+cp /etc/ssh/keys-root/authorized_keys /etc/ssh/keys-vagrant/authorized_keys
+chown vagrant:vagrant -R /etc/ssh/keys-vagrant
