@@ -1,8 +1,6 @@
 Vagrant.require_version '>= 1.6.2'
 
 Vagrant.configure('2') do |config|
-  # # We're using the root user here.
-  # config.ssh.username = 'root'
   # Set default shell to SH.
   config.ssh.shell = 'sh'
 
