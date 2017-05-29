@@ -1,8 +1,8 @@
 {
   "builders": [
     {
-      "name": "virtualbox-esxi",
-      "vm_name": "virtualbox-esxi",
+      "name": "esxi",
+      "vm_name": "esxibox",
       "type": "virtualbox-iso",
       "headless": false,
       "disk_size": "{{ user `disk_size` }}",
@@ -10,7 +10,7 @@
       "guest_additions_mode": "disable",
       "iso_url": "{{user `iso_path`}}",
       "iso_checksum_type": "none",
-      "ssh_username": "root",
+      "ssh_username": "vagrant",
       "ssh_password": "{{user `root_password`}}",
       "ssh_wait_timeout": "60m",
       "shutdown_command": "esxcli system maintenanceMode set -e true -t 0 ; esxcli system shutdown poweroff -d 10 -r 'Packer Shutdown' ; esxcli system maintenanceMode set -e false -t 0",

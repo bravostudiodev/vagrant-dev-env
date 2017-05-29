@@ -1,8 +1,8 @@
 Vagrant.require_version '>= 1.6.2'
 
 Vagrant.configure('2') do |config|
-  # We're using the root user here.
-  config.ssh.username = 'root'
+  # # We're using the root user here.
+  # config.ssh.username = 'root'
   # Set default shell to SH.
   config.ssh.shell = 'sh'
 
@@ -39,4 +39,20 @@ Vagrant.configure('2') do |config|
     vcenter.memory = 4096
     vcenter.enable_vm_customization = false
   end
+
+  cmdline_args = ARGV
+  cmdline_args.each do |optarg|
+    opt, arg = optarg.split('=', 2)
+    case opt
+    when '--license-key'
+      config.vm.provision :shell do |s|
+        s.args = arg
+        s.privileged = false
+        s.inline = <<-SHELL
+          vim-cmd vimsvc/license --set $1
+        SHELL
+      end
+    end
+  end
+    
 end
