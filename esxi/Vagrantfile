@@ -2,13 +2,21 @@
 # vi: set ft=ruby :
 
 Vagrant.configure(2) do |config|
-  config.ssh.private_key_path="~/.vagrant.d/insecure_private_key"
-  
   config.vm.define "esxi" do |vmcfg|
-    vmcfg.vm.box = "bravostudiodev/esxi"
+   vmcfg.ssh.private_key_path="~/.vagrant.d/insecure_private_key"
+   vmcfg.vm.box = "bravostudiodev/esxi"
     vmcfg.vm.hostname = "esxi"
     if Vagrant.has_plugin?("vagrant-vbguest")
       vmcfg.vbguest.auto_update = false
+    end
+    vmcfg.vm.network "forwarded_port", guest: 443, host: 12443, host_ip: "127.0.0.1"
+    vmcfg.vm.network "forwarded_port", guest: 902, host: 902, host_ip: "127.0.0.1"
+    vmcfg.vm.network "forwarded_port", guest: 903, host: 903, host_ip: "127.0.0.1"    
+    vmcfg.vm.provision :shell do |s|
+      s.privileged = false
+      s.inline = <<-SHELL
+        esxcfg-volume -M datastore1
+      SHELL
     end
   end
 end
