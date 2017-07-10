@@ -16,7 +16,7 @@
       "disk_size": 61440,
       "floppy_files": [
         "./vagrant.pub",
-        "./scripts/Autounattend-7.xml",
+        "./win7answer/Autounattend.xml",
         "./scripts/dis-updates.ps1",
         "./scripts/hotfix-KB3102810.bat",
         "./scripts/microsoft-updates.bat",
