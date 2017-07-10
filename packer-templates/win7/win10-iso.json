@@ -1,24 +1,23 @@
 {
   "builders": [
     {
-      "name": "win7",
-      "vm_name": "win7box",
+      "name": "win10",
+      "vm_name": "win10box",
       "type": "virtualbox-iso",
       "iso_url": "{{user `iso_path`}}",
       "iso_checksum_type": "none",
-      "headless": true,
+      "headless": false,
       "boot_wait": "2m",
       "ssh_username": "vagrant",
       "ssh_password": "vagrant",
-      "ssh_wait_timeout": "8h",
+      "ssh_wait_timeout": "2h",
       "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
-      "guest_os_type": "Windows7_64",
+      "guest_os_type": "Windows81_64",
       "disk_size": 61440,
       "floppy_files": [
         "./vagrant.pub",
-        "./scripts/Autounattend-7.xml",
-        "./scripts/dis-updates.ps1",
-        "./scripts/hotfix-KB3102810.bat",
+        "./scripts/Autounattend-10.xml",
+        "./scripts/fixnetwork.ps1",
         "./scripts/microsoft-updates.bat",
         "./scripts/win-updates.ps1",
         "./scripts/openssh.ps1",
@@ -47,10 +46,10 @@
       "type": "vagrant",
       "keep_input_artifact": false,
       "compression_level": 9,
-      "vagrantfile_template": "scripts/win7-vagrantfile_template.rb"
+      "vagrantfile_template": "scripts/win10-vagrantfile_template.rb"
     }
   ],
   "variables": {
-    "iso_path": "./iso/Windows7_SP1_X64.iso"
+    "iso_path": "./iso/Win10_1703_English_x64.iso"
   }
 }
