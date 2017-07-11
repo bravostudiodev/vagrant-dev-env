@@ -6,7 +6,7 @@
       "type": "virtualbox-iso",
       "iso_url": "{{user `iso_path`}}",
       "iso_checksum_type": "none",
-      "headless": false,
+      "headless": true,
       "boot_wait": "2m",
       "ssh_username": "vagrant",
       "ssh_password": "vagrant",
