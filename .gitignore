@@ -5,3 +5,6 @@
 **/iso/
 **/*.iso
 **/*.box
+**/*.log
+**/files/
+**/bkp/

@@ -1,0 +1,48 @@
+{
+  "builders": [{
+    "name": "win7base",
+    "vm_name": "win7basebox",
+    "type": "virtualbox-iso",
+    "iso_url": "{{user `iso_path`}}",
+    "iso_checksum_type": "none",
+    "headless": true,
+    "boot_wait": "2m",
+    "communicator": "winrm",
+    "winrm_username": "vagrant",
+    "winrm_password": "vagrant",
+    "winrm_timeout": "8h",
+    "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+    "shutdown_timeout": "2m",
+    "guest_os_type": "Windows7_64",
+    "disk_size": 61440,
+    "format": "ova",
+    "floppy_files": [
+      "./win7answer/Autounattend.xml"
+    ],
+    "vboxmanage": [
+      [ "modifyvm", "{{.Name}}", "--memory", "2048" ],
+      [ "modifyvm", "{{.Name}}", "--cpus", "2" ]
+    ],
+    "guest_additions_mode": "disable"
+  }],
+  "provisioners": [{
+    "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "inline": [
+      "shutdown /a"
+    ]
+  },{
+    "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "scripts": [
+      "scripts/dis-updates.ps1"
+    ]
+  },{
+    "type": "windows-restart" 
+  }],
+  "post-processors": [{
+    "type": "vagrant",
+    "keep_input_artifact": true,
+    "compression_level": 0,
+    "vagrantfile_template": "scripts/win7-vagrantfile_template.rb"
+  }],
+  "variables": {
+    "iso_path": "./iso/Windows7_SP1_X64.iso"
+  }
+}
