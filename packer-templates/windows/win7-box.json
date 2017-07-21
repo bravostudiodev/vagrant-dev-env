@@ -4,41 +4,35 @@
     "vm_name": "win7box",
     "type": "virtualbox-ovf",
     "source_path": "output-win7base/win7basebox.ova",
-    "boot_wait": "2m",
+    "headless": true,
+    "boot_wait": "40s",
     "communicator": "winrm",
     "winrm_username": "vagrant",
     "winrm_password": "vagrant",
     "winrm_timeout": "8h",
     "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
     "shutdown_timeout": "2m",
-    "guest_additions_mode": "attach",
     "vboxmanage_post": [
       [ "storageattach", "{{.Name}}", "--storagectl", "IDE Controller", "--port", "1", "--device", "0", "--medium", "none" ]
-    ]
+    ],
+    "guest_additions_mode": "attach"
   }],
   "provisioners": [{
     "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "inline": [
-      "Write-Output \"Hotfix for: Update is slow and high CPU usage occurs in Windows 7 SP1\"",
+      "Write-Output \"Hotfixes for: (1.)Update is slow and high CPU usage occurs in Windows 7 SP1\"",
       "Write-Output \" https://support.microsoft.com/en-us/kb/3102810\"",
+      "Write-Output \"(2.) The OS handle's position is not what FileStream expected (Windows Management Framework 3.0):\"",
+      "Write-Output \" http://www.leeholmes.com/blog/2008/07/30/workaround-the-os-handles-position-is-not-what-filestream-expected/\"",
       "(new-object net.webclient).DownloadFile('{{user `HotfixSP1Url`}}', '{{user `HotfixSP1Path`}}')",
-      "Start-Process -FilePath wusa -ArgumentList '{{user `HotfixSP1Path`}}','/quiet','/norestart' -Wait"
+      "(new-object net.webclient).DownloadFile('{{user `HotfixPSOSHandleUrl`}}', '{{user `HotfixPSOSHandlePath`}}')",
+      "Start-Process -FilePath wusa -ArgumentList '{{user `HotfixSP1Path`}}','/quiet','/norestart' -Wait",
+      "Start-Process -FilePath wusa -ArgumentList '{{user `HotfixPSOSHandlePath`}}','/quiet','/norestart' -Wait"
     ]
   },{ 
     "type": "windows-restart" 
   },{
-    "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "inline": [ 
-      "Write-Output \"Windows Management Framework 3.0 with fix for:\"",
-      "Write-Output \" The OS handle's position is not what FileStream expected\"",
-      "Write-Output \" http://www.leeholmes.com/blog/2008/07/30/workaround-the-os-handles-position-is-not-what-filestream-expected/\"",
-      "(new-object net.webclient).DownloadFile('{{user `HotfixPSOSHandleUrl`}}', '{{user `HotfixPSOSHandlePath`}}')",
-      "Start-Process -FilePath wusa -ArgumentList '{{user `HotfixPSOSHandlePath`}}','/quiet','/norestart' -Wait"
-    ]
-  },{
-    "type": "windows-restart" 
-  },{
     "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "scripts": [
       "scripts/tweaks-basic.ps1",
-      "scripts/tweaks-minor.ps1",
       "scripts/openssh.ps1",
       "scripts/vb-guest-tools.ps1",
       "scripts/compile-dotnet4.0.30319.ps1"
