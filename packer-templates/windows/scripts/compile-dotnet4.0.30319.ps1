@@ -4,12 +4,12 @@
 
 $dotnet32ngen = "$Env:Windir\microsoft.net\framework\v4.0.30319\ngen.exe"
 if ((Test-Path $dotnet32ngen)) {
-	Start-Process -FilePath $dotnet32ngen -ArgumentList 'update','/force','/queue' -Wait
-	Start-Process -FilePath $dotnet32ngen -ArgumentList 'executequeueditems' -Wait
+	Start-Process -FilePath $dotnet32ngen -ArgumentList 'update','/force','/queue' -Wait | Out-Default
+	Start-Process -FilePath $dotnet32ngen -ArgumentList 'executequeueditems' -Wait | Out-Default
 }
 
 $dotnet64ngen = "$Env:Windir\microsoft.net\framework64\v4.0.30319\ngen.exe"
 if ((Test-Path $dotnet64ngen)) {
-	Start-Process -FilePath $dotnet64ngen -ArgumentList 'update','/force','/queue' -Wait
-	Start-Process -FilePath $dotnet64ngen -ArgumentList 'executequeueditems' -Wait
+	Start-Process -FilePath $dotnet64ngen -ArgumentList 'update','/force','/queue' -Wait | Out-Default
+	Start-Process -FilePath $dotnet64ngen -ArgumentList 'executequeueditems' -Wait | Out-Default
 }

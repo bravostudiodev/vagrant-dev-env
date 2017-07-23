@@ -27,7 +27,7 @@
   }],
   "provisioners": [{
     "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "inline": [
-      "shutdown /a"
+      "shutdown /a || echo No shutdown to stop"
     ]
   },{
     "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "scripts": [

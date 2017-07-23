@@ -1,9 +1,9 @@
 {
   "builders": [{
     "name": "win7",
-    "vm_name": "win7box",
+    "vm_name": "win7choco",
     "type": "virtualbox-ovf",
-    "source_path": "output-win7base/win7basebox.ova",
+    "source_path": "output-win7/win7box.ova",
     "headless": true,
     "boot_wait": "5s",
     "communicator": "winrm",
@@ -12,38 +12,36 @@
     "winrm_timeout": "8h",
     "shutdown_command": "shutdown /s /t 3 /f /d p:4:1 /c \"Packer Shutdown\"",
     "shutdown_timeout": "2m",
-    "guest_additions_mode": "disable",
-    "vboxmanage": [
-      [ "storageattach", "{{.Name}}", "--storagectl", "IDE Controller", "--port", "1", "--device", "0", "--type", "dvddrive", "--medium", "emptydrive"],
-      [ "storageattach", "{{.Name}}", "--storagectl", "IDE Controller", "--port", "1", "--device", "0", "--type", "dvddrive", "--medium", "additions"]
-    ],
-    "vboxmanage_post": [
-      [ "storageattach", "{{.Name}}", "--storagectl", "IDE Controller", "--port", "1", "--device", "0", "--medium", "none" ]
-    ]
+    "guest_additions_mode": "disable"
   }],
-  "provisioners": [{ 
-    "type": "file",
-    "source": "scripts/oracle-cert.cer",
-    "destination": "C:/Windows/Temp/oracle-cert.cer"
-  },{
+  "provisioners": [{
     "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "inline": [
       "$ErrorActionPreference = \"Stop\"",
-      "Write-Output \"Install VirtualBox Additions\"",
-      "Start-Process -FilePath certutil -ArgumentList '-addstore','-f','TrustedPublisher','C:\\Windows\\Temp\\oracle-cert.cer' -Wait -NoNewWindow",
-      "Start-Process -FilePath \"D:\\VBoxWindowsAdditions.exe\" -ArgumentList '/S','/v\"/qn REBOOT=ReallySuppress\"' -Wait -NoNewWindow"
+      "Write-Output \"Install Chocolatey\"",
+      "iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))"
     ]
   },{
     "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "inline": [
       "$ErrorActionPreference = \"Stop\"",
-      "Write-Output \"Hotfix for slow update in Windows 7 SP1 https://support.microsoft.com/en-us/kb/3102810\"",
-      "(new-object net.webclient).DownloadFile('{{user `HotfixSP1Url`}}', '{{user `HotfixSP1Path`}}')",
-      "Start-Process -FilePath wusa -ArgumentList '{{user `HotfixSP1Path`}}','/quiet','/norestart' -Wait -NoNewWindow"
+      "Write-Output \"Install .Net 4.5 and update powershell\"",
+      "choco install -y dotnet4.5 powershell"
+    ],
+    "valid_exit_codes": [
+      3010
     ]
   },{
     "type": "windows-restart" 
   },{
     "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "scripts": [
-      "scripts/tweaks-basic.ps1"
+      "scripts/compile-dotnet4.0.30319.ps1",
+      "scripts/cleanup.ps1"
+    ]
+  },{
+    "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "inline": [
+      "Write-Output \"Cleaning updates..\"",
+      "Stop-Service -Name wuauserv -Force",
+      "Remove-Item c:\\Windows\\SoftwareDistribution\\Download\\* -Recurse -Force",
+      "Start-Service -Name wuauserv"
     ]
   },{
     "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "inline": [
