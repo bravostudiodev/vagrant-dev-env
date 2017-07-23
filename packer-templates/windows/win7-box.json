@@ -21,15 +21,11 @@
       [ "storageattach", "{{.Name}}", "--storagectl", "IDE Controller", "--port", "1", "--device", "0", "--medium", "none" ]
     ]
   }],
-  "provisioners": [{ 
-    "type": "file",
-    "source": "scripts/oracle-cert.cer",
-    "destination": "C:/Windows/Temp/oracle-cert.cer"
-  },{
+  "provisioners": [{
     "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "inline": [
       "$ErrorActionPreference = \"Stop\"",
       "Write-Output \"Install VirtualBox Additions\"",
-      "Start-Process -FilePath certutil -ArgumentList '-addstore','-f','TrustedPublisher','C:\\Windows\\Temp\\oracle-cert.cer' -Wait -NoNewWindow",
+      "Get-ChildItem \"D:\\cert\" -Filter *.cer | ForEach-Object -ErrorAction stop { Start-Process -FilePath \"D:\\cert\\VBoxCertUtil.exe\" -ArgumentList 'add-trusted-publisher',\"D:\\cert\\$_\",'--root',\"D:\\cert\\$_\" -Wait -NoNewWindow}",
       "Start-Process -FilePath \"D:\\VBoxWindowsAdditions.exe\" -ArgumentList '/S','/v\"/qn REBOOT=ReallySuppress\"' -Wait -NoNewWindow"
     ]
   },{
