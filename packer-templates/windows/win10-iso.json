@@ -1,54 +1,70 @@
 {
-  "builders": [
-    {
-      "name": "win10",
-      "vm_name": "win10box",
-      "type": "virtualbox-iso",
-      "iso_url": "{{user `iso_path`}}",
-      "iso_checksum_type": "none",
-      "headless": true,
-      "boot_wait": "2m",
-      "ssh_username": "vagrant",
-      "ssh_password": "vagrant",
-      "ssh_wait_timeout": "2h",
-      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
-      "guest_os_type": "Windows81_64",
-      "disk_size": 61440,
-      "floppy_files": [
-        "./vagrant.pub",
-        "./win10answer/Autounattend.xml",
-        "./scripts/fixnetwork.ps1",
-        "./scripts/microsoft-updates.bat",
-        "./scripts/win-updates.ps1",
-        "./scripts/openssh.ps1",
-        "./scripts/oracle-cert.cer"
-      ],
-      "vboxmanage": [
-        [ "modifyvm", "{{.Name}}", "--memory", "2048" ],
-        [ "modifyvm", "{{.Name}}", "--cpus", "2" ]
-      ]
-    }
-  ],
-  "provisioners": [
-    {
-      "type": "shell",
-      "remote_path": "/tmp/script.bat",
-      "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
-      "scripts": [
-        "./scripts/vm-guest-tools.bat",
-        "./scripts/vm-configure.bat",
-        "./scripts/compact.bat"
-      ]
-    }
-  ],
-  "post-processors": [
-    {
-      "type": "vagrant",
-      "keep_input_artifact": false,
-      "compression_level": 9,
-      "vagrantfile_template": "scripts/win10-vagrantfile_template.rb"
-    }
-  ],
+  "builders": [{
+    "name": "win10",
+    "vm_name": "win10box",
+    "type": "virtualbox-iso",
+    "iso_url": "{{user `iso_path`}}",
+    "iso_checksum_type": "none",
+    "headless": true,
+    "boot_wait": "7m",
+    "communicator": "winrm",
+    "winrm_username": "vagrant",
+    "winrm_password": "vagrant",
+    "winrm_timeout": "8h",
+    "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+    "shutdown_timeout": "2m",
+    "guest_os_type": "Windows81_64",
+    "disk_size": 61440,
+    
+    "floppy_files": [
+      "./win10answer/Autounattend.xml",
+      "./scripts/fixnetwork.ps1"
+    ],
+    "vboxmanage": [
+      [ "modifyvm", "{{.Name}}", "--memory", "2048" ],
+      [ "modifyvm", "{{.Name}}", "--cpus", "2" ]
+    ],
+    "guest_additions_mode": "attach"
+  }],
+  "provisioners": [{
+    "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "inline": [
+      "shutdown /a || echo No shutdown to stop"
+    ]
+  },{
+    "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "scripts": [
+      "scripts/dis-updates.ps1"
+    ]
+  },{
+    "type": "windows-restart" 
+  },{
+    "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "inline": [
+      "$ErrorActionPreference = \"Stop\"",
+      "Write-Output \"Install VirtualBox Additions\"",
+      "Get-ChildItem \"E:\\cert\" -Filter *.cer | ForEach-Object -ErrorAction stop { Start-Process -FilePath \"E:\\cert\\VBoxCertUtil.exe\" -ArgumentList 'add-trusted-publisher',\"E:\\cert\\$_\",'--root',\"E:\\cert\\$_\" -Wait -NoNewWindow}",
+      "Start-Process -FilePath \"E:\\VBoxWindowsAdditions.exe\" -ArgumentList '/S','/v\"/qn REBOOT=ReallySuppress\"' -Wait -NoNewWindow"
+    ]
+  },{
+    "type": "windows-restart" 
+  },{
+    "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "scripts": [
+      "scripts/tweaks-basic.ps1"
+    ]
+  },{
+    "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "inline": [
+      "Write-Output \"Defragmenting...\"",
+      "Start-Process -FilePath cmd -ArgumentList '/c','Defrag.exe c: /H' -Wait -NoNewWindow"
+    ]
+  },{
+    "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "scripts": [
+      "scripts/zero-empty-space.ps1"
+    ]
+  }],
+  "post-processors": [{
+    "type": "vagrant",
+    "keep_input_artifact": false,
+    
+    "vagrantfile_template": "scripts/win10-vagrantfile_template.rb"
+  }],
   "variables": {
     "iso_path": "./iso/Win10_1703_English_x64.iso"
   }

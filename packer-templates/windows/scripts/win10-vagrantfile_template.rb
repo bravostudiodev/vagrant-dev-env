@@ -5,8 +5,6 @@ Vagrant.require_version ">= 1.6.2"
 
 Vagrant.configure("2") do |config|
     
-    # Vagrant doesn't support insert key on ESXi so let's stick with the unsecure
-    # key for now.
     config.ssh.insert_key = false
 
     config.vm.communicator = "winrm"
@@ -20,6 +18,10 @@ Vagrant.configure("2") do |config|
 
     config.vm.network :forwarded_port, guest: 3389, host: 3389, id: "rdp", auto_correct: true
     config.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", auto_correct: true
+
+    if Vagrant.has_plugin?("vagrant-vbguest")
+        config.vbguest.auto_update = false
+    end
 
     config.vm.provider :virtualbox do |v, override|
         #v.gui = true
