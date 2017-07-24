@@ -36,8 +36,6 @@
       "scripts/tweaks-basic.ps1"
     ]
   },{
-    "type": "windows-restart" 
-  },{
     "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "inline": [
       "$ErrorActionPreference = \"Stop\"",
       "Write-Output \"Install VirtualBox Additions\"",

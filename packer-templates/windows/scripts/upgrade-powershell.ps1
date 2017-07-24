@@ -53,3 +53,22 @@ Install-DotNet45
 
 Write-Output "Powershell 5.1" | Out-Default
 Install-Hotfix "http://download.microsoft.com/download/6/F/5/6F5FF66C-6775-42B0-86C4-47D41F2DA187/Win7AndW2K8R2-KB3191566-x64.zip"
+
+Write-Output "Setting up winrm" | Out-Default
+Enable-WSManCredSSP -Force -Role Server | Out-Default
+#Set-NetFirewallRule -Name WINRM-HTTP-In-TCP-PUBLIC -RemoteAddress Any | Out-Default
+netsh advfirewall firewall add rule name="WINRM-HTTP-In-TCP-PUBLIC" dir=in action=allow remoteip=any | Out-Default
+netsh advfirewall firewall add rule name="RemoteDesktop-UserMode-In-TCP" dir=in action=allow enable=Yes | Out-Default
+
+Enable-PSRemoting -Force | Out-Default
+winrm set winrm/config/client/auth '@{Basic="true"}'  | Out-Default
+winrm set winrm/config/service/auth '@{Basic="true"}' | Out-Default
+winrm set winrm/config/service '@{AllowUnencrypted="true"}' | Out-Default
+winrm set winrm/config '@{MaxTimeoutms="1800000"}' | Out-Default
+winrm set winrm/config/winrs '@{MaxMemoryPerShellMB="2048"}' | Out-Default
+winrm set winrm/config/listener?Address=*+Transport=HTTP '@{Port="5985"}' | Out-Default
+
+Write-Output "winrm setup complete" | Out-Default
+net stop winrm
+Write-host "Sleeping for 1 minute, then restarting"
+start-sleep -s 60
