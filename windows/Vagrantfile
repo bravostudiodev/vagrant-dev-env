@@ -7,7 +7,7 @@ Vagrant.configure(2) do |config|
   config.vm.define "win7" do |vmcfg|
     vmcfg.vm.box = "bravostudiodev/win7box"
     vmcfg.vm.hostname = "win7"
-    vmcfg.vm.provision :shell, path: "scripts/upgrade-powershell.ps1"
+    # vmcfg.vm.provision :shell, path: "scripts/upgrade-powershell.ps1"
   end
 
   config.vm.define "win10" do |vmcfg|

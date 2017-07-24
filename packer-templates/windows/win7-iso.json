@@ -31,7 +31,9 @@
     ]
   },{
     "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "scripts": [
-      "scripts/dis-updates.ps1"
+      "scripts/dis-updates.ps1",
+      "scripts/upgrade-powershell.ps1",
+      "scripts/tweaks-basic.ps1"
     ]
   },{
     "type": "windows-restart" 
@@ -44,10 +46,6 @@
     ]
   },{
     "type": "windows-restart" 
-  },{
-    "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "scripts": [
-      "scripts/tweaks-basic.ps1"
-    ]
   },{
     "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "inline": [
       "Write-Output \"Defragmenting...\"",
