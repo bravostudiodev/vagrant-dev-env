@@ -1,0 +1,16 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+  config.ssh.private_key_path="~/.vagrant.d/insecure_private_key"
+   
+  config.vm.define "win7" do |vmcfg|
+    vmcfg.vm.box = "bravostudiodev/win7box"
+    vmcfg.vm.hostname = "win7"
+  end
+
+  config.vm.define "win10" do |vmcfg|
+    vmcfg.vm.box = "bravostudiodev/win10box"
+    vmcfg.vm.hostname = "win7"
+  end
+end
