@@ -30,20 +30,18 @@
         "$ErrorActionPreference = 'SilentlyContinue'",
         "Start-Process -FilePath shutdown -ArgumentList '/a' -Wait -NoNewWindow | Out-Default"
     ]},
-    { "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "script": "scripts/hotfix-KB3102810.ps1" },
     { "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "script": "scripts/dis-updates.ps1" },
-    { "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "script": "scripts/dotnet452.ps1" },
-    { "type": "windows-restart", "restart_timeout": "10m" },
-    { "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "script": "scripts/powershell4.ps1" },
-    { "type": "windows-restart", "restart_timeout": "10m" },
+    { "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "script": "scripts/hotfix-KB3102810.ps1" },
     { "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "script": "scripts/tweaks-basic.ps1" },
+    { "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "script": "scripts/dotnet45.ps1" },
+    { "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "script": "scripts/powershell4.ps1" },
     { "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "inline": [
         "$ErrorActionPreference = \"Stop\"",
         "Write-Output \"Install VirtualBox Additions\"",
         "Get-ChildItem \"E:\\cert\" -Filter *.cer | ForEach-Object -ErrorAction stop { Start-Process -FilePath \"E:\\cert\\VBoxCertUtil.exe\" -ArgumentList 'add-trusted-publisher',\"E:\\cert\\$_\",'--root',\"E:\\cert\\$_\" -Wait}",
         "Start-Process -FilePath \"E:\\VBoxWindowsAdditions.exe\" -ArgumentList '/S','/v\"/qn REBOOT=ReallySuppress\"' -Wait"
     ]},
-    { "type": "windows-restart" },
+    { "type": "windows-restart", "restart_timeout": "10m" },
     { "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "inline": [
         "Write-Output \"Defragmenting...\"",
         "Start-Process -FilePath cmd -ArgumentList '/c','Defrag.exe c: /H' -Wait"
