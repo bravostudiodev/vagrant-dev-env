@@ -6,7 +6,7 @@
     "iso_url": "{{user `iso_path`}}",
     "iso_checksum_type": "none",
     "headless": true,
-    "boot_wait": "2m",
+    "boot_wait": "4m",
     "communicator": "winrm",
     "winrm_username": "vagrant",
     "winrm_password": "vagrant",
@@ -25,35 +25,31 @@
     ],
     "guest_additions_mode": "attach"
   }],
-  "provisioners": [{
-    "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "inline": [
-      "$(shutdown /a | Out-Host;$?) -or $(Write-Output \"echo No shutdown to stop\")"
-    ]
-  },{
-    "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "scripts": [
-      "scripts/dis-updates.ps1",
-      "scripts/upgrade-powershell.ps1",
-      "scripts/tweaks-basic.ps1"
-    ]
-  },{
-    "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "inline": [
-      "$ErrorActionPreference = \"Stop\"",
-      "Write-Output \"Install VirtualBox Additions\"",
-      "Get-ChildItem \"E:\\cert\" -Filter *.cer | ForEach-Object -ErrorAction stop { Start-Process -FilePath \"E:\\cert\\VBoxCertUtil.exe\" -ArgumentList 'add-trusted-publisher',\"E:\\cert\\$_\",'--root',\"E:\\cert\\$_\" -Wait -NoNewWindow}",
-      "Start-Process -FilePath \"E:\\VBoxWindowsAdditions.exe\" -ArgumentList '/S','/v\"/qn REBOOT=ReallySuppress\"' -Wait -NoNewWindow"
-    ]
-  },{
-    "type": "windows-restart" 
-  },{
-    "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "inline": [
-      "Write-Output \"Defragmenting...\"",
-      "Start-Process -FilePath cmd -ArgumentList '/c','Defrag.exe c: /H' -Wait -NoNewWindow"
-    ]
-  },{
-    "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "scripts": [
-      "scripts/zero-empty-space.ps1"
-    ]
-  }],
+  "provisioners": [
+    { "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "inline": [
+        "$ErrorActionPreference = 'SilentlyContinue'",
+        "Start-Process -FilePath shutdown -ArgumentList '/a' -Wait -NoNewWindow | Out-Default"
+    ]},
+    { "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "script": "scripts/hotfix-KB3102810.ps1" },
+    { "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "script": "scripts/dis-updates.ps1" },
+    { "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "script": "scripts/dotnet452.ps1" },
+    { "type": "windows-restart", "restart_timeout": "10m" },
+    { "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "script": "scripts/powershell4.ps1" },
+    { "type": "windows-restart", "restart_timeout": "10m" },
+    { "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "script": "scripts/tweaks-basic.ps1" },
+    { "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "inline": [
+        "$ErrorActionPreference = \"Stop\"",
+        "Write-Output \"Install VirtualBox Additions\"",
+        "Get-ChildItem \"E:\\cert\" -Filter *.cer | ForEach-Object -ErrorAction stop { Start-Process -FilePath \"E:\\cert\\VBoxCertUtil.exe\" -ArgumentList 'add-trusted-publisher',\"E:\\cert\\$_\",'--root',\"E:\\cert\\$_\" -Wait}",
+        "Start-Process -FilePath \"E:\\VBoxWindowsAdditions.exe\" -ArgumentList '/S','/v\"/qn REBOOT=ReallySuppress\"' -Wait"
+    ]},
+    { "type": "windows-restart" },
+    { "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "inline": [
+        "Write-Output \"Defragmenting...\"",
+        "Start-Process -FilePath cmd -ArgumentList '/c','Defrag.exe c: /H' -Wait"
+    ]},
+    { "type": "powershell", "elevated_user": "vagrant", "elevated_password": "vagrant", "script":  "scripts/zero-empty-space.ps1" }
+  ],
   "post-processors": [{
     "type": "vagrant",
     "keep_input_artifact": false,
