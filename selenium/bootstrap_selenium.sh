@@ -3,6 +3,10 @@
 
 set -ex
 
+APP_LANG="en_US.UTF-8"
+APP_LANGUAGE="en_US:en"
+APP_LC_ALL="en_US.UTF-8"
+
 cat > /etc/apt/sources.list << EOF
 deb http://archive.ubuntu.com/ubuntu xenial main universe
 deb http://archive.ubuntu.com/ubuntu xenial-updates main universe
@@ -85,7 +89,7 @@ rm /tmp/firefox.tar.bz2
 ln -fs /opt/firefox/firefox /usr/local/bin/firefox-${FIREFOX_VERSION}
 ln -fs /usr/local/bin/firefox-${FIREFOX_VERSION} /usr/local/bin/firefox
 update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/local/bin/firefox 40
-sed -e "s|^\( *\)\([[]submenu[]] [(]Applications[)] {}.*\)$|\1[exec] (Firefox) {/usr/bin/firefox} </opt/firefox/browser/chrome/icons/default/default48.png>\n\1\2|" -i /etc/X11/fluxbox/fluxbox-menu
+sed -e "s|^\( *\)\([[]submenu[]] [(]Applications[)] {}.*\)$|\1[exec] (Firefox) {/usr/local/bin/firefox} </opt/firefox/browser/chrome/icons/default/default48.png>\n\1\2|" -i /etc/X11/fluxbox/fluxbox-menu
 
 echo "GeckoDriver..."
 GECKODRIVER_VERSION=0.16.1
