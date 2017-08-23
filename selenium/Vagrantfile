@@ -1,0 +1,39 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+  if (/cygwin|mswin|mingw|bccwin|wince|emx/ =~ RUBY_PLATFORM) != nil
+    config.vm.synced_folder ".", "/shared", mount_options: ["dmode=700,fmode=600"]
+  else
+    config.vm.synced_folder ".", "/shared"
+  end
+
+  config.ssh.insert_key = false
+  config.ssh.private_key_path="~/.vagrant.d/insecure_private_key"
+
+  config.vm.define "selenium" do |vmcfg|
+    vmcfg.vm.hostname = "selenium"
+    # vmcfg.vm.box = "ubuntu/trusty64"
+    vmcfg.vm.box = "boxcutter/ubuntu1604"
+    
+    vmcfg.vm.network :forwarded_port, guest:4444, host:14444
+    vmcfg.vm.network :private_network, ip: "192.168.33.10"
+    # vmcfg.vm.provision "shell", path: "bootstrap_selenium.sh"
+    vmcfg.vm.provision :shell, inline: <<-SHELL
+      chmod +x /shared/bootstrap_selenium.sh
+      sudo /shared/bootstrap_selenium.sh
+    SHELL
+    
+    vmcfg.vm.provision :reload
+    
+    if Vagrant.has_plugin?("vagrant-vbguest")
+      vmcfg.vbguest.auto_update = false
+    end
+
+    vmcfg.vm.provider :virtualbox do |vb|
+      vb.memory = "2048"
+      vb.cpus = 2
+      vb.gui = true
+    end
+  end
+end
