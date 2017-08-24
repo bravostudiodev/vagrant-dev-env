@@ -123,13 +123,13 @@ EOF
 echo -n "Start X on login..."
 su -l vagrant -c "touch /home/vagrant/.profile && echo \"[ ! -e '/tmp/.X0-lock' ] && startx \" >> /home/vagrant/.profile"
 
-# GRADLE_VERSION=3.4.1
-# wget --no-verbose -O /tmp/gradle-bin.zip https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip
-# mkdir -p /opt/gradle
-# unzip /tmp/gradle-bin.zip -d /opt/gradle
-# rm /tmp/gradle-bin.zip
-# ln -fs /opt/gradle/gradle-${GRADLE_VERSION}/bin/gradle /usr/local/bin/gradle-${GRADLE_VERSION}
-# ln -fs gradle-${GRADLE_VERSION} /usr/local/bin/gradle
+GRADLE_VERSION=3.4.1
+wget --no-verbose -O /tmp/gradle-bin.zip https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip
+mkdir -p /opt/gradle
+unzip /tmp/gradle-bin.zip -d /opt/gradle
+rm /tmp/gradle-bin.zip
+ln -fs /opt/gradle/gradle-${GRADLE_VERSION}/bin/gradle /usr/local/bin/gradle-${GRADLE_VERSION}
+ln -fs gradle-${GRADLE_VERSION} /usr/local/bin/gradle
 
 SELENIUM_VERSION_BASE=3.5
 SELENIUM_VERSION=3.5.2
