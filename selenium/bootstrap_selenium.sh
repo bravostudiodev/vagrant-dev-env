@@ -172,7 +172,8 @@ ln -fs selenium-server-standalone-${SELENIUM_VERSION}.jar /opt/selenium/selenium
 echo "Selenium Bravo Servlet..."
 BRAVOSERVLET_VERSION=2.0
 mkdir -p /opt/selenium
-wget --no-verbose -O /opt/selenium/selenium-bravo-servlet-${BRAVOSERVLET_VERSION}.jar https://www.dropbox.com/sh/tktg1idrgusc02u/AADckT90VjYCy4kYXHn2Px85a/selenium-bravo-servlet-${BRAVOSERVLET_VERSION}.jar?dl=1
+wget --no-verbose -O /opt/selenium/selenium-bravo-servlet-${BRAVOSERVLET_VERSION}.jar \
+ https://github.com/bravostudiodev/bravo-grid/releases/download/${BRAVOSERVLET_VERSION}/selenium-bravo-servlet-${BRAVOSERVLET_VERSION}-deps.jar
 ln -fs selenium-bravo-servlet-${BRAVOSERVLET_VERSION}.jar /opt/selenium/selenium-bravo-servlet.jar
 
 echo -n "Cleanup..."
