@@ -160,6 +160,7 @@ apt-get install -qqy --no-install-recommends \
 # ln -fs /opt/gradle/gradle-${GRADLE_VERSION}/bin/gradle /usr/local/bin/gradle-${GRADLE_VERSION}
 # ln -fs gradle-${GRADLE_VERSION} /usr/local/bin/gradle
 
+echo "Selenium..."
 SELENIUM_VERSION_BASE=3.5
 SELENIUM_VERSION=3.5.3
 SELENIUM_URLPATH=${SELENIUM_VERSION_BASE}/selenium-server-standalone-${SELENIUM_VERSION}.jar
@@ -167,6 +168,12 @@ mkdir -p /opt/selenium
 wget --no-verbose -O /opt/selenium/selenium-server-standalone-${SELENIUM_VERSION}.jar "https://selenium-release.storage.googleapis.com/${SELENIUM_URLPATH}"
 chmod a+r /opt/selenium/selenium-server-standalone-${SELENIUM_VERSION}.jar
 ln -fs selenium-server-standalone-${SELENIUM_VERSION}.jar /opt/selenium/selenium-server-standalone.jar
+
+echo "Selenium Bravo Servlet..."
+BRAVOSERVLET_VERSION=2.0
+mkdir -p /opt/selenium
+wget --no-verbose -O /opt/selenium/selenium-bravo-servlet-${BRAVOSERVLET_VERSION}.jar https://www.dropbox.com/sh/tktg1idrgusc02u/AADckT90VjYCy4kYXHn2Px85a/selenium-bravo-servlet-${BRAVOSERVLET_VERSION}.jar?dl=1
+ln -fs selenium-bravo-servlet-${BRAVOSERVLET_VERSION}.jar /opt/selenium/selenium-bravo-servlet.jar
 
 echo -n "Cleanup..."
 rm -rf /var/lib/apt/lists/* /var/cache/apt/*
