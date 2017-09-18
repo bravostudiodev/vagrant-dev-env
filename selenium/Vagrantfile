@@ -3,7 +3,7 @@
 
 Vagrant.configure(2) do |config|
   if (/cygwin|mswin|mingw|bccwin|wince|emx/ =~ RUBY_PLATFORM) != nil
-    config.vm.synced_folder ".", "/shared", mount_options: ["dmode=700,fmode=600"]
+    config.vm.synced_folder ".", "/shared", mount_options: ["dmode=664,fmode=555"]
   else
     config.vm.synced_folder ".", "/shared"
   end
@@ -13,19 +13,55 @@ Vagrant.configure(2) do |config|
 
   config.vm.define "selenium" do |vmcfg|
     vmcfg.vm.hostname = "selenium"
-    # vmcfg.vm.box = "ubuntu/trusty64"
     vmcfg.vm.box = "boxcutter/ubuntu1604"
     
     vmcfg.vm.network :forwarded_port, guest:4444, host:14444
+    # IMPORTANT: For embedded proxy to be accessible, you must allow incomming firewall rule from this IP on host
+    #  sudo iptables -A INPUT -s 192.168.33.10/32 -j ACCEPT
+    #  sudo iptables -A OUTPUT -d 192.168.33.10 -j ACCEPT
     vmcfg.vm.network :private_network, ip: "192.168.33.10"
-    # vmcfg.vm.provision "shell", path: "bootstrap_selenium.sh"
     vmcfg.vm.provision :shell, inline: <<-SHELL
-      chmod +x /shared/bootstrap_selenium.sh
-      sudo /shared/bootstrap_selenium.sh
-    SHELL
-    
-    vmcfg.vm.provision :reload
-    
+mkdir -p /opt/selenium
+cp /shared/{selenium_entry.sh,selenium-bravo-servlet-1.0-SNAPSHOT.jar} /opt/selenium/
+chmod a+x /opt/selenium/selenium_entry.sh
+ln -s selenium-bravo-servlet-1.0-SNAPSHOT.jar /opt/selenium/selenium-bravo-servlet.jar
+source /shared/bootstrap_selenium.sh
+
+echo "192.168.33.1 host" >> /etc/hosts
+usermod -a -G xpra,tty,video,dialout vagrant
+
+apt-get update
+apt-get install -qqy --no-install-recommends xserver-xorg-legacy
+rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+touch /etc/X11/Xwrapper.config
+echo "needs_root_rights=yes" >> /etc/X11/Xwrapper.config
+
+cat > /etc/systemd/system/xpraonboot.service << "EOF"
+[Unit]
+Description=xpra as user
+After=getty@tty7.service
+
+[Service]
+Type=simple
+User=vagrant
+ExecStart=/opt/selenium/selenium_entry.sh
+StandardInput=tty
+TTYPath=/dev/tty7
+TTYReset=yes
+TTYVHangup=yes
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl disable xpra
+systemctl enable xpraonboot
+systemctl start xpraonboot
+
+SHELL
+
+    vmcfg.vm.provision :reload # Requires: vagrant plugin install vagrant-reload
+
     if Vagrant.has_plugin?("vagrant-vbguest")
       vmcfg.vbguest.auto_update = false
     end
@@ -34,6 +70,7 @@ Vagrant.configure(2) do |config|
       vb.memory = "2048"
       vb.cpus = 2
       vb.gui = true
+      vb.customize ['modifyvm', :id, '--clipboard', 'bidirectional']  
     end
   end
 end
