@@ -5,7 +5,7 @@ ARG APP_USER=app
 EXPOSE 4444 4480
 
 COPY bootstrap_selenium.sh /tmp/
-RUN /tmp/bootstrap_selenium.sh \
+RUN source /tmp/bootstrap_selenium.sh \
     && rm -f /tmp/bootstrap_selenium.sh
 
 COPY selenium_entry.sh /opt/selenium/
