@@ -178,4 +178,4 @@ ln -fs selenium-bravo-servlet-${BRAVOSERVLET_VERSION}.jar /opt/selenium/selenium
 
 echo -n "Cleanup..."
 apt-get clean
-rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+rm -rf /var/lib/apt/lists/* /var/cache/apt/* || true
