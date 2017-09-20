@@ -177,4 +177,5 @@ wget --no-verbose -O /opt/selenium/selenium-bravo-servlet-${BRAVOSERVLET_VERSION
 ln -fs selenium-bravo-servlet-${BRAVOSERVLET_VERSION}.jar /opt/selenium/selenium-bravo-servlet.jar
 
 echo -n "Cleanup..."
+apt-get clean
 rm -rf /var/lib/apt/lists/* /var/cache/apt/*
