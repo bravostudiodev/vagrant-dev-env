@@ -170,10 +170,10 @@ chmod a+r /opt/selenium/selenium-server-standalone-${SELENIUM_VERSION}.jar
 ln -fs selenium-server-standalone-${SELENIUM_VERSION}.jar /opt/selenium/selenium-server-standalone.jar
 
 echo "Selenium Bravo Servlet..."
-BRAVOSERVLET_VERSION=2.0
+BRAVOSERVLET_VERSION=2.1
 mkdir -p /opt/selenium
 wget --no-verbose -O /opt/selenium/selenium-bravo-servlet-${BRAVOSERVLET_VERSION}.jar \
- https://github.com/bravostudiodev/bravo-grid/releases/download/${BRAVOSERVLET_VERSION}/selenium-bravo-servlet-${BRAVOSERVLET_VERSION}-deps.jar
+ https://github.com/bravostudiodev/bravo-grid/releases/download/${BRAVOSERVLET_VERSION}/selenium-bravo-servlet-${BRAVOSERVLET_VERSION}-standalone.jar
 ln -fs selenium-bravo-servlet-${BRAVOSERVLET_VERSION}.jar /opt/selenium/selenium-bravo-servlet.jar
 
 echo -n "Cleanup..."

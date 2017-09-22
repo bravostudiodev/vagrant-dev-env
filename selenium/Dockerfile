@@ -5,7 +5,7 @@ ARG APP_USER=app
 EXPOSE 4444 4480
 
 COPY bootstrap_selenium.sh /tmp/
-RUN chmod a+x /tmp/bootstrap_selenium.sh \
+RUN chmod a+rwx /tmp/bootstrap_selenium.sh \
     && /tmp/bootstrap_selenium.sh \
     && rm -f /tmp/bootstrap_selenium.sh
 
