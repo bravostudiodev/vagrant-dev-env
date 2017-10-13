@@ -12,7 +12,8 @@ function EnsureKey {
 
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
-function AddToEnvPath($dir) {
+function AddToEnvPath($dirNotExpanded) {
+    $dir = [System.Environment]::ExpandEnvironmentVariables($dirNotExpanded);
     $currentPath = [System.Environment]::GetEnvironmentVariable('Path', [System.EnvironmentVariableTarget]::Machine);
     if (!$($currentPath).ToLower().Contains($($dir).ToLower())) {
         $currentPath += ";" + $dir
