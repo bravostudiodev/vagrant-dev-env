@@ -71,4 +71,22 @@ SHELL
       vb.customize ['modifyvm', :id, '--clipboard', 'bidirectional']  
     end
   end
+
+  config.vm.define "winselenium" do |vmcfg|
+    vmcfg.vm.box = "bravostudiodev/win10box"
+    vmcfg.vm.hostname = "winselenium"
+    vmcfg.ssh.private_key_path="~/.vagrant.d/insecure_private_key"
+    # IMPORTANT: For embedded proxy to be accessible, you must allow incomming firewall rule from this IP on host
+    #  sudo iptables -A INPUT -s 192.168.33.20/32 -j ACCEPT
+    #  sudo iptables -A OUTPUT -d 192.168.33.20 -j ACCEPT
+    vmcfg.vm.network :private_network, ip: "192.168.33.20"
+
+    vmcfg.vm.provision :shell, path: "bootstrap_selenium.ps1"
+    vmcfg.vm.provision :reload # Requires: vagrant plugin install vagrant-reload
+
+    if Vagrant.has_plugin?("vagrant-vbguest")
+      vmcfg.vbguest.auto_update = false
+    end
+  end
+
 end
