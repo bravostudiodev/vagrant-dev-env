@@ -1,6 +1,5 @@
 $ErrorActionPreference = "Stop"
 
-Write-Output ".Net 4.5.2 ..." | Out-Default
 function Choco-Install ($pkg) {
     Start-Process -FilePath C:\ProgramData\Chocolatey\bin\choco.exe -ArgumentList $('upgrade -dv -y ' + $pkg) -Wait -NoNewWindow
 }
@@ -115,7 +114,7 @@ if ($hasMatchingLine -notcontains $true) {
 
 $hasMatchingLine = $bsdevVersions | %{$_ -match "C:/tools/selenium/selenium-bravo-servlet.jar"}
 if ($hasMatchingLine -notcontains $true) {
-    (New-Object System.Net.WebClient).DownloadFile("https://github.com/bravostudiodev/bravo-grid/releases/download/2.1/selenium-bravo-servlet-2.1-standalone.jar", "C:/tools/selenium/selenium-bravo-servlet.jar")
+    (New-Object System.Net.WebClient).DownloadFile("https://github.com/bravostudiodev/bravo-grid/releases/download/2.2/selenium-bravo-servlet-2.2-standalone.jar", "C:/tools/selenium/selenium-bravo-servlet.jar")
     "C:/tools/selenium/selenium-bravo-servlet.jar" >> $pathVerBsdev
 }
 

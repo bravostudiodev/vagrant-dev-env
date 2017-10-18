@@ -49,6 +49,7 @@ apt-get install -qqy --no-install-recommends \
     bzip2 \
     curl \
     ca-certificates \
+    jq \
     psmisc \
     openjdk-8-jre-headless \
     unzip \
@@ -91,7 +92,7 @@ echo "Google Chrome..."
 # Google removes old versions from repositories, it is only possible to install stable beta or unstable versions
 CHROME_VERSION="google-chrome-stable"
 rm -f /opt/google/chrome/google-chrome
-apt-get install -qqy --no-install-recommends ${CHROME_VERSION:-google-chrome-stable}
+apt-get install --reinstall -qqy --no-install-recommends ${CHROME_VERSION:-google-chrome-stable}
 mv -f /opt/google/chrome/google-chrome /opt/google/chrome/google-chrome-original
 cat > /usr/bin/google-chrome-no-sandbox << "EOF"
 #!/usr/bin/env bash
@@ -104,7 +105,7 @@ ln -fs /usr/bin/google-chrome-no-sandbox /opt/google/chrome/google-chrome
 update-alternatives --install /usr/bin/google-chrome google-chrome /usr/bin/google-chrome-no-sandbox 400
 
 echo "Chrome webdriver..."
-CHROME_DRIVER_VERSION=2.32
+CHROME_DRIVER_VERSION=$(curl -L -s https://chromedriver.storage.googleapis.com/LATEST_RELEASE)
 wget --no-verbose -O /tmp/chromedriver_linux64.zip https://chromedriver.storage.googleapis.com/${CHROME_DRIVER_VERSION}/chromedriver_linux64.zip
 mkdir -p /usr/local/bin
 unzip -o /tmp/chromedriver_linux64.zip -d /usr/local/bin
@@ -114,8 +115,8 @@ chmod 755 /usr/local/bin/chromedriver-${CHROME_DRIVER_VERSION}
 ln -fs /usr/local/bin/chromedriver-${CHROME_DRIVER_VERSION} /usr/local/bin/chromedriver
 
 echo "Firefox..."
-FIREFOX_VERSION=56.0b9
-apt-get install -qqy --no-install-recommends firefox
+FIREFOX_VERSION=57.0b8
+apt-get install --reinstall -qqy --no-install-recommends firefox
 wget --no-verbose -O /tmp/firefox.tar.bz2 https://download-installer.cdn.mozilla.net/pub/firefox/releases/${FIREFOX_VERSION}/linux-x86_64/en-US/firefox-${FIREFOX_VERSION}.tar.bz2
 apt-get -y purge firefox
 rm -rf /opt/firefox
@@ -126,8 +127,8 @@ ln -fs /usr/local/bin/firefox-${FIREFOX_VERSION} /usr/local/bin/firefox
 update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/local/bin/firefox 40
 
 echo "GeckoDriver..."
-GECKODRIVER_VERSION=0.18.0
-wget --no-verbose -O /tmp/geckodriver.tar.gz https://github.com/mozilla/geckodriver/releases/download/v${GECKODRIVER_VERSION}/geckodriver-v${GECKODRIVER_VERSION}-linux64.tar.gz
+GECKODRIVER_VERSION=$(curl -L -s -H "Accept: application/json" https://github.com/mozilla/geckodriver/releases/latest | jq -r ".tag_name")
+wget --no-verbose -O /tmp/geckodriver.tar.gz https://github.com/mozilla/geckodriver/releases/download/${GECKODRIVER_VERSION}/geckodriver-${GECKODRIVER_VERSION}-linux64.tar.gz
 mkdir -p /usr/local/bin
 tar -C /usr/local/bin -zxf /tmp/geckodriver.tar.gz
 rm /tmp/geckodriver.tar.gz
@@ -161,8 +162,8 @@ apt-get install -qqy --no-install-recommends \
 # ln -fs gradle-${GRADLE_VERSION} /usr/local/bin/gradle
 
 echo "Selenium..."
-SELENIUM_VERSION_BASE=3.5
-SELENIUM_VERSION=3.5.3
+SELENIUM_VERSION=$(curl -L -s -H "Accept: application/json" https://github.com/SeleniumHQ/selenium/releases/latest | jq -r ".tag_name" | cut -f 2 -d '-')
+SELENIUM_VERSION_BASE=$(echo ${SELENIUM_VERSION} | cut -f 1,2 -d '.')
 SELENIUM_URLPATH=${SELENIUM_VERSION_BASE}/selenium-server-standalone-${SELENIUM_VERSION}.jar
 mkdir -p /opt/selenium
 wget --no-verbose -O /opt/selenium/selenium-server-standalone-${SELENIUM_VERSION}.jar "https://selenium-release.storage.googleapis.com/${SELENIUM_URLPATH}"
@@ -170,7 +171,7 @@ chmod a+r /opt/selenium/selenium-server-standalone-${SELENIUM_VERSION}.jar
 ln -fs selenium-server-standalone-${SELENIUM_VERSION}.jar /opt/selenium/selenium-server-standalone.jar
 
 echo "Selenium Bravo Servlet..."
-BRAVOSERVLET_VERSION=2.1
+BRAVOSERVLET_VERSION=$(curl -L -s -H "Accept: application/json" https://github.com/bravostudiodev/bravo-grid/releases/latest | jq -r ".tag_name")
 mkdir -p /opt/selenium
 wget --no-verbose -O /opt/selenium/selenium-bravo-servlet-${BRAVOSERVLET_VERSION}.jar \
  https://github.com/bravostudiodev/bravo-grid/releases/download/${BRAVOSERVLET_VERSION}/selenium-bravo-servlet-${BRAVOSERVLET_VERSION}-standalone.jar
