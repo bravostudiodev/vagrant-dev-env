@@ -177,6 +177,9 @@ wget --no-verbose -O /opt/selenium/selenium-bravo-servlet-${BRAVOSERVLET_VERSION
  https://github.com/bravostudiodev/bravo-grid/releases/download/${BRAVOSERVLET_VERSION}/selenium-bravo-servlet-${BRAVOSERVLET_VERSION}-standalone.jar
 ln -fs selenium-bravo-servlet-${BRAVOSERVLET_VERSION}.jar /opt/selenium/selenium-bravo-servlet.jar
 
+echo BRAVOEXT_PATH=LATEST> /opt/selenium/selenium_entry.cfg
+chmod a+rwx /opt/selenium
+
 echo -n "Cleanup..."
 apt-get clean
 rm -rf /var/lib/apt/lists/* /var/cache/apt/* || true

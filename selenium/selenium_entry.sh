@@ -4,6 +4,31 @@
 : ${BRAVOEXT_PORT:=4480}
 : ${HEADLESS_XSERVER:=false}
 : ${DISPLAY=":100.0"}
+: ${SELENIUM_PATH:=/opt/selenium/selenium-server-standalone.jar}
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "${SCRIPT_DIR}/selenium_entry.cfg" || true
+
+case "${BRAVOEXT_PATH}" in
+  LATEST)
+    echo "LATEST BRAVOEXT_PATH"
+    BRAVOSERVLET_VERSION=$(curl -L -s -H "Accept: application/json" https://github.com/bravostudiodev/bravo-grid/releases/latest | jq -r ".tag_name")
+    mkdir -p /opt/selenium
+    wget --no-verbose -O /opt/selenium/selenium-bravo-servlet-${BRAVOSERVLET_VERSION}.jar \
+    https://github.com/bravostudiodev/bravo-grid/releases/download/${BRAVOSERVLET_VERSION}/selenium-bravo-servlet-${BRAVOSERVLET_VERSION}-standalone.jar
+    ln -fs selenium-bravo-servlet-${BRAVOSERVLET_VERSION}.jar /opt/selenium/selenium-bravo-servlet-latest.jar
+    BRAVOEXT_PATH=/opt/selenium/selenium-bravo-servlet-latest.jar
+    ;;
+  SNAPSHOT)
+    echo "SNAPSHOT BRAVOEXT_PATH"
+    BRAVOEXT_PATH=/shared/selenium-bravo-servlet.jar
+    ;;
+  *)
+    echo "Default BRAVOEXT_PATH"
+    : ${BRAVOEXT_PATH:=/opt/selenium/selenium-bravo-servlet.jar}
+esac
+
+echo "BRAVOEXT_PATH=${BRAVOEXT_PATH}"
 
 echo "starting node with configuration:"
 cat <<EOF
@@ -59,9 +84,9 @@ XPRA_INITENV_COMMAND="xpra initenv" xpra --no-daemon --no-mdns --no-pulseaudio \
 XSRV_PID=$!
 
 wait_xserver
-/usr/bin/java ${JAVA_OPTS} -jar /opt/selenium/selenium-server-standalone.jar -port ${SELENIUM_PORT} &
+/usr/bin/java ${JAVA_OPTS} -jar ${SELENIUM_PATH} -port ${SELENIUM_PORT} &
 #JAVA_PID=$!
-/usr/bin/java ${JAVA_OPTS} -jar /opt/selenium/selenium-bravo-servlet.jar server ${BRAVOEXT_PORT} &
+/usr/bin/java ${JAVA_OPTS} -jar ${BRAVOEXT_PATH} server ${BRAVOEXT_PORT} &
 
 # Specifying signal EXIT is useful when using set -e
 trap shutdownhandler SIGTERM SIGINT EXIT

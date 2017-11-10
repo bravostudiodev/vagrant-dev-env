@@ -1,0 +1,2 @@
+cp -f ~/work/bravo-grid/selenium-bravo-servlet/build/libs/selenium-bravo-servlet-2.2-standalone.jar ./
+vagrant ssh selenium -- -C "sudo systemctl restart xpraonboot"
