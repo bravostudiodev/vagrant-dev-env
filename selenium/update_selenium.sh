@@ -23,8 +23,8 @@ rm /tmp/chromedriver_linux64.zip
 chmod 755 /usr/local/bin/chromedriver
 
 echo "Firefox..."
-FIREFOX_VERSION=57.0b8
 apt-get install --reinstall -qqy --no-install-recommends firefox
+FIREFOX_VERSION=57.0
 wget --no-verbose -O /tmp/firefox.tar.bz2 https://download-installer.cdn.mozilla.net/pub/firefox/releases/${FIREFOX_VERSION}/linux-x86_64/en-US/firefox-${FIREFOX_VERSION}.tar.bz2
 apt-get -y purge firefox
 rm -rf /opt/firefox
