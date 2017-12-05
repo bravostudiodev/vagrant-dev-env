@@ -6,11 +6,13 @@ EXPOSE 4444 4480
 
 COPY bootstrap_selenium.sh /tmp/
 RUN chmod a+rwx /tmp/bootstrap_selenium.sh \
+    && sync \
     && /tmp/bootstrap_selenium.sh \
     && rm -f /tmp/bootstrap_selenium.sh
 
 COPY selenium_entry.sh /opt/selenium/
 RUN chmod a+x /opt/selenium/selenium_entry.sh \
+    && sync \
     && mkdir -p /tmp/.X11-unix /run/dbus /run/xpra /run/user/1000 \
     && chmod -R a+rwx /tmp/.X11-unix /run/dbus /run/xpra /run/user
 
