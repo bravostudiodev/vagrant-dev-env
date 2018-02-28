@@ -108,13 +108,13 @@ $pathVerBsdev = "C:/versions-bsdev.txt"
 $bsdevVersions = if([System.IO.File]::Exists($pathVerBsdev)){ Get-Content $pathVerBsdev } else { "" }
 $hasMatchingLine = $bsdevVersions | %{$_ -match "C:/tools/selenium/selenium-server-standalone.jar"}
 if ($hasMatchingLine -notcontains $true) {
-    (New-Object System.Net.WebClient).DownloadFile("https://selenium-release.storage.googleapis.com/3.5/selenium-server-standalone-3.5.3.jar", "C:/tools/selenium/selenium-server-standalone.jar")
+    (New-Object System.Net.WebClient).DownloadFile("https://selenium-release.storage.googleapis.com/3.8/selenium-server-standalone-3.8.1.jar", "C:/tools/selenium/selenium-server-standalone.jar")
     "C:/tools/selenium/selenium-server-standalone.jar" >> $pathVerBsdev
 }
 
 $hasMatchingLine = $bsdevVersions | %{$_ -match "C:/tools/selenium/selenium-bravo-servlet.jar"}
 if ($hasMatchingLine -notcontains $true) {
-    (New-Object System.Net.WebClient).DownloadFile("https://github.com/bravostudiodev/bravo-grid/releases/download/2.2/selenium-bravo-servlet-2.2-standalone.jar", "C:/tools/selenium/selenium-bravo-servlet.jar")
+    (New-Object System.Net.WebClient).DownloadFile("https://github.com/bravostudiodev/bravo-grid/releases/download/2.5/selenium-bravo-servlet-2.5-standalone.jar", "C:/tools/selenium/selenium-bravo-servlet.jar")
     "C:/tools/selenium/selenium-bravo-servlet.jar" >> $pathVerBsdev
 }
 
