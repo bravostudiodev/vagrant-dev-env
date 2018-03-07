@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+source /etc/profile
+
 : ${SELENIUM_PORT:=4444} # As integer, maps to "port"
 : ${BRAVOEXT_PORT:=4480}
 : ${HEADLESS_XSERVER:=false}
@@ -79,7 +81,7 @@ export DISPLAY=${DISPLAY}
 
 XPRA_INITENV_COMMAND="xpra initenv" xpra --no-daemon --no-mdns --no-pulseaudio \
   --xvfb="/usr/bin/Xorg ${XORG_ARGS}" \
-  start-desktop ${DISPLAY} --start="xrandr --output VGA-1 --mode 1440x900" --exit-with-children --start-child="exec fluxbox" \
+  start-desktop ${DISPLAY} --start="xrandr --output default --mode ${SCREEN_WIDTH}x${SCREEN_HEIGHT}" --exit-with-children --start-child="exec fluxbox" \
   --bind-tcp=0.0.0.0:10000 &
 XSRV_PID=$!
 

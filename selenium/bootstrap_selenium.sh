@@ -2,15 +2,15 @@
 
 set -ex
 
-APP_LANG="en_US.UTF-8"
-APP_LANGUAGE="en_US:en"
-APP_LC_ALL="en_US.UTF-8"
-APP_SCREEN_WIDTH=1360
-APP_SCREEN_HEIGHT=1020
+export APP_LANG="en_US.UTF-8"
+export APP_LANGUAGE="en_US:en"
+export APP_LC_ALL="en_US.UTF-8"
+export APP_SCREEN_WIDTH=1360
+export APP_SCREEN_HEIGHT=1020
 
-DEBIAN_FRONTEND=noninteractive
-DEBCONF_NONINTERACTIVE_SEEN=true
-TERM=linux
+export DEBIAN_FRONTEND=noninteractive
+export DEBCONF_NONINTERACTIVE_SEEN=true
+export TERM=linux
 
 cat > /etc/apt/sources.list << EOF
 deb http://archive.ubuntu.com/ubuntu xenial main universe
@@ -59,6 +59,7 @@ sed -e 's/securerandom\.source=file:\/dev\/random/securerandom\.source=file:\/de
  -i /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/security/java.security
 
 apt-get install -qqy --no-install-recommends \
+    build-essential \
     dbus-x11 \
     fluxbox \
     fonts-ipafont-gothic \
@@ -66,7 +67,9 @@ apt-get install -qqy --no-install-recommends \
     python-dbus \
     python-lzo \
     python-opengl \
+    python-pip \
     python-rencode \
+    python-setuptools \
     x11-apps \
     xauth \
     xfonts-100dpi \
@@ -81,6 +84,9 @@ apt-get install -qqy --no-install-recommends \
     xserver-xorg-video-all \
     xserver-xorg-video-dummy \
     xterm
+
+python -m pip install --upgrade pip
+python -m pip install --upgrade python-uninput
 
 sed -e "s/^\( *\)\(Virtual.*\)$/\1#\2\n\1Virtual ${APP_SCREEN_WIDTH} ${APP_SCREEN_HEIGHT}/" -i /etc/xpra/xorg.conf
 

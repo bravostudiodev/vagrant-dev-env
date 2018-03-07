@@ -25,12 +25,20 @@ Vagrant.configure(2) do |config|
     # sudo ufw allow from 192.168.33.1 to 192.168.33.0/24
     vmcfg.vm.network :private_network, ip: "192.168.33.10"
     vmcfg.vm.provision :shell, inline: <<-SHELL
-source /shared/bootstrap_selenium.sh
+export DEBIAN_FRONTEND=noninteractive
+export DEBCONF_NONINTERACTIVE_SEEN=true
+export TERM=linux
+source /shared/bootstrap_00base.sh
+source /shared/bootstrap_01xpra.sh
+source /shared/bootstrap_02firefox.sh
+source /shared/bootstrap_03chrome.sh
+source /shared/bootstrap_04selenium.sh
 mkdir -p /opt/selenium
 cp /shared/selenium_entry.sh /opt/selenium/
 chmod a+x /opt/selenium/selenium_entry.sh
 
-usermod -a -G xpra,tty,video,dialout vagrant
+addgroup uinput
+usermod -a -G xpra,tty,video,dialout,uinput vagrant
 
 apt-get update
 apt-get install -qqy --no-install-recommends xserver-xorg-legacy
