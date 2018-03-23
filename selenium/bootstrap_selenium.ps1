@@ -81,6 +81,10 @@ if ($(cmd /c "where choco.exe || echo NOT INSTALLED").contains("NOT INSTALLED"))
 # Upgrade chocolatey itself
 Choco-Install -pkg "chocolatey"
 
+# https://github.com/lukesampson/scoop/issues/2040
+# Workaround for error “Could not create SSL/TLS secure channel.”
+[Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+
 ########################################
 # Install chocolatey packages
 #
@@ -93,17 +97,16 @@ Choco-Install -pkg "selenium-edge-driver"
 Choco-Install -pkg "jre8 /exclude:32"
 
 ########################################
-# Enable autologon for vagrant user
+# Enable autologon for user
 #
 $keyWinlogon = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon'
-EnsureKey $keyWinlogon
+# EnsureKey $keyWinlogon
 Set-ItemProperty -Path $keyWinlogon -Name AutoAdminLogon -Type "DWord" -Value 1 -Force | Out-Default
 Set-ItemProperty -Path $keyWinlogon -Name DefaultUserName -Value "vagrant" -Force | Out-Default
 Set-ItemProperty -Path $keyWinlogon -Name DefaultPassword -Value "vagrant" -Force | Out-Default
 
 ########################################
-# Download bravo selenium jars
-#
+Write-Output "Download selenium jar"
 $pathVerBsdev = "C:/versions-bsdev.txt"
 $bsdevVersions = if([System.IO.File]::Exists($pathVerBsdev)){ Get-Content $pathVerBsdev } else { "" }
 $hasMatchingLine = $bsdevVersions | %{$_ -match "C:/tools/selenium/selenium-server-standalone.jar"}
@@ -112,6 +115,7 @@ if ($hasMatchingLine -notcontains $true) {
     "C:/tools/selenium/selenium-server-standalone.jar" >> $pathVerBsdev
 }
 
+Write-Output "Download bravo servlet jar"
 $hasMatchingLine = $bsdevVersions | %{$_ -match "C:/tools/selenium/selenium-bravo-servlet.jar"}
 if ($hasMatchingLine -notcontains $true) {
     (New-Object System.Net.WebClient).DownloadFile("https://github.com/bravostudiodev/bravo-grid/releases/download/2.5/selenium-bravo-servlet-2.5-standalone.jar", "C:/tools/selenium/selenium-bravo-servlet.jar")
@@ -119,8 +123,7 @@ if ($hasMatchingLine -notcontains $true) {
 }
 
 ########################################
-# Add all components to system PATH
-#
+Write-Output "Add all components to system PATH"
 AddToEnvPath('%ProgramFiles(x86)%\Google\Chrome\Application')
 AddToEnvPath('%ProgramFiles%\Mozilla Firefox')
 AddToEnvPath('%SystemDrive%\tools\selenium')
