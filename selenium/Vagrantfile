@@ -102,7 +102,7 @@ function EnsureKey {
   $item = $args[0]
   if (!(Test-Path $item)) { New-Item $item -ItemType RegistryKey -Force | Out-Default }
 }
-$keyWinlogon = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon'
+$keyWinlogon = 'HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon'
 EnsureKey $keyWinlogon
 Set-ItemProperty -Path $keyWinlogon -Name AutoAdminLogon -Type "DWord" -Value 1 -Force | Out-Default
 Set-ItemProperty -Path $keyWinlogon -Name DefaultUserName -Value "vagrant" -Force | Out-Default
