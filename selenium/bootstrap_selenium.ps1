@@ -97,15 +97,6 @@ Choco-Install -pkg "selenium-edge-driver"
 Choco-Install -pkg "jre8 /exclude:32"
 
 ########################################
-# Enable autologon for user
-#
-$keyWinlogon = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon'
-# EnsureKey $keyWinlogon
-Set-ItemProperty -Path $keyWinlogon -Name AutoAdminLogon -Type "DWord" -Value 1 -Force | Out-Default
-Set-ItemProperty -Path $keyWinlogon -Name DefaultUserName -Value "vagrant" -Force | Out-Default
-Set-ItemProperty -Path $keyWinlogon -Name DefaultPassword -Value "vagrant" -Force | Out-Default
-
-########################################
 Write-Output "Download selenium jar"
 $pathVerBsdev = "C:/versions-bsdev.txt"
 $bsdevVersions = if([System.IO.File]::Exists($pathVerBsdev)){ Get-Content $pathVerBsdev } else { "" }
