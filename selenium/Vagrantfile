@@ -117,6 +117,7 @@ SHELL
     end
   end
 
+  # vagrant box add --name "Microsoft/EdgeOnWindows10" /mnt/data/vagrant\ boxes/MsEdge\ -\ Win10.box
   config.vm.define "winhodor" do |vmcfg|
     vmcfg.vm.box = "Microsoft/EdgeOnWindows10"
     vmcfg.vm.hostname = "winhodor"
