@@ -117,7 +117,14 @@ SHELL
     end
   end
 
+  # https://developer.microsoft.com/en-us/microsoft-edge/tools/vms/
+  # https://az792536.vo.msecnd.net/vms/VMBuild_20171019/Vagrant/MSEdge/MSEdge.Win10.Vagrant.zip
   # vagrant box add --name "Microsoft/EdgeOnWindows10" /mnt/data/vagrant\ boxes/MsEdge\ -\ Win10.box
+  # IMPORTANT: Manual steps needed in VM on first run:
+  #  1. Update VirtualBoxGuestAddition to match version at host
+  #  2. Download VM winrm-enable.cmd from https://gist.github.com/gorvin/ed0b8b9738768f10e9ad7c9766ba5dcb
+  #  3. Open cmd.exe with elevated privileges and execute winrm-enable.cmd
+  #  4. Go back to host and execute vagrant up --provision winhodor
   config.vm.define "winhodor" do |vmcfg|
     vmcfg.vm.box = "Microsoft/EdgeOnWindows10"
     vmcfg.vm.hostname = "winhodor"
@@ -127,13 +134,10 @@ SHELL
     vmcfg.winrm.password = "Passw0rd!"
     vmcfg.windows.halt_timeout = 15
     vmcfg.vm.network :forwarded_port, guest: 3389, host: 3389, id: "rdp", auto_correct: true
-    vmcfg.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", auto_correct: true
-
-    # vmcfg.ssh.insert_key = false
-    vmcfg.ssh.private_key_path="~/.vagrant.d/insecure_private_key"
+    # vmcfg.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", auto_correct: true
     vmcfg.vm.network :private_network, ip: "192.168.33.30"
     vmcfg.vm.provision :shell, path: "bootstrap_selenium.ps1"
-    vmcfg.vm.provision :reload
+    # vmcfg.vm.provision :reload
 
     if Vagrant.has_plugin?("vagrant-vbguest")
       vmcfg.vbguest.auto_update = false
