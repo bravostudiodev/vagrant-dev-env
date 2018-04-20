@@ -94,7 +94,7 @@ Choco-Install -pkg "selenium-chrome-driver"
 Choco-Install -pkg "selenium-gecko-driver"
 Choco-Install -pkg "selenium-ie-driver"
 Choco-Install -pkg "selenium-edge-driver"
-Choco-Install -pkg "jre8 /exclude:32"
+Choco-Install -pkg "jre8"
 
 ########################################
 Write-Output "Download selenium jar"
@@ -140,47 +140,59 @@ $procs = $($pidSelenium; $pidBravo)
 $procs | Wait-Process
 '@ > "C:/tools/selenium/selenium_entry.ps1"
 
+Write-Output "Set autorun for selenium_entry.ps1"
 $keyAutorun = 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Run'
 EnsureKey $keyAutorun
 Set-ItemProperty -Path $keyAutorun -Name RunSelenium -Value '"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" C:/tools/selenium/selenium_entry.ps1' -Force | Out-Default
 
 # Again, make sure all networks belong to Private profile (same as before winrm connection was set up)
 # This is needed in case some interface are added after winrm was set up
+Write-Output "Set all nets as private"
 $networkListManager = [Activator]::CreateInstance([Type]::GetTypeFromCLSID([Guid]"{DCB00C01-570F-4A9B-8D69-199FDBA5723B}"))
 $networkListManager.GetNetworkConnections() | foreach { $_.GetNetwork().SetCategory(1) }
 
 # Disable firewall on Private profile (allow unrestricted access to selenium / bravo servlet)
+Write-Output "Disable firewall for private profile"
 Set-NetFirewallProfile -Profile Private -Enabled False
 
 # Disable hibernation
+Write-Output "Disable hibernation"
 $keyPower = 'HKLM:\System\CurrentControlSet\Control\Power'
 EnsureKey $keyPower
 Set-ItemProperty -Path $keyPower -Name HibernateFileSizePercent -Type "DWord" -Value 0 -Force | Out-Default
 Set-ItemProperty -Path $keyPower -Name HibernateEnabled -Type "DWord" -Value 0 -Force | Out-Default
 
 # Disable ScreenSaver
+Write-Output "Disable ScreenSaver"
 $keyDesktop = 'HKLM:\Software\Policies\Microsoft\Windows\Control Panel\Desktop'
 EnsureKey $keyDesktop
 Set-ItemProperty -Path $keyDesktop -Name ScreenSaveActive -Type "DWord" -Value 0 -Force | Out-Default
 
 # Activate High Performance power plan
+Write-Output "Switch to High performance power plan"
 $p = Get-CimInstance -Name root\cimv2\power -Class win32_PowerPlan -Filter "ElementName = 'High Performance'"
 Invoke-CimMethod -InputObject $p -MethodName Activate
 
 # Turning off the Network Location Wizard 
+Write-Output "Turning off the Network Location Wizard"
 EnsureKey "HKLM:\System\CurrentControlSet\Control\Network\NewNetworkWindowOff"
 
 # Enable file and printer sharing
+Write-Output "Enable file and printer sharing"
 Start-Process -FilePath cmd -ArgumentList '/c','netsh advfirewall firewall set rule group="File and Printer Sharing" new enable=yes' -Wait
 
 # Enable RDP
+Write-Output "Enable RDP"
 Start-Process -FilePath cmd -ArgumentList '/c','netsh advfirewall firewall add rule name="Open Port 3389" dir=in action=allow protocol=TCP localport=3389' -Wait
 
 # Allow TS Connections
+Write-Output "Allow TS Connections"
 $keyTS = 'HKLM:\System\CurrentControlSet\Control\Terminal Server'
 EnsureKey $keyTS
 Set-ItemProperty -Path $keyTS -Name fDenyTSConnections -Type "DWord" -Value 0 -Force | Out-Default
 
 # Enable Windows 7 / 10 remote MMC
+Write-Output "Enable remote administration"
 Start-Process -FilePath cmd -ArgumentList '/c','netsh advfirewall firewall set rule group="remote administration" new enable=yes' -Wait
+Write-Output "Windows Remote Management"
 Start-Process -FilePath cmd -ArgumentList '/c','netsh advfirewall firewall set rule group="Windows Remote Management" new enable=yes' -Wait
