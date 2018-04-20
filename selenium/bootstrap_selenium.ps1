@@ -52,7 +52,7 @@ Set-ItemProperty -Path $keyMediaCost -Name Default -Type "DWord" -Value 2 -Force
 ########################################
 # Install Chocolatey
 #
-if ($(cmd /c "where choco.exe || echo NOT INSTALLED").contains("NOT INSTALLED")) {
+if ($(cmd /c "pushd C:\ProgramData\Chocolatey\bin && where choco.exe || echo NOT INSTALLED").contains("NOT INSTALLED")) {
     (New-Object System.Net.WebClient).DownloadFile("https://chocolatey.org/api/v2/package/chocolatey/", "C:/Windows/Temp/chocolatey.zip")
     [System.IO.Compression.ZipFile]::ExtractToDirectory("C:/Windows/Temp/chocolatey.zip", "C:/Windows/Temp/chocolatey")
     iex C:\Windows\Temp\chocolatey\tools\chocolateyInstall.ps1
@@ -99,6 +99,7 @@ Choco-Install -pkg "jre8 /exclude:32"
 ########################################
 Write-Output "Download selenium jar"
 $pathVerBsdev = "C:/versions-bsdev.txt"
+
 $bsdevVersions = if([System.IO.File]::Exists($pathVerBsdev)){ Get-Content $pathVerBsdev } else { "" }
 $hasMatchingLine = $bsdevVersions | %{$_ -match "C:/tools/selenium/selenium-server-standalone.jar"}
 if ($hasMatchingLine -notcontains $true) {
