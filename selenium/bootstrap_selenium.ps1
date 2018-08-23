@@ -104,7 +104,7 @@ $pathVerBsdev = "C:/versions-bsdev.txt"
 $bsdevVersions = if([System.IO.File]::Exists($pathVerBsdev)){ Get-Content $pathVerBsdev } else { "" }
 $hasMatchingLine = $bsdevVersions | %{$_ -match "C:/tools/selenium/selenium-server-standalone.jar"}
 if ($hasMatchingLine -notcontains $true) {
-    (New-Object System.Net.WebClient).DownloadFile("https://selenium-release.storage.googleapis.com/3.11/selenium-server-standalone-3.11.0.jar", "C:/tools/selenium/selenium-server-standalone.jar")
+    (New-Object System.Net.WebClient).DownloadFile("https://selenium-release.storage.googleapis.com/3.14/selenium-server-standalone-3.14.0.jar", "C:/tools/selenium/selenium-server-standalone.jar")
     "C:/tools/selenium/selenium-server-standalone.jar" >> $pathVerBsdev
 }
 
