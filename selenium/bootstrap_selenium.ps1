@@ -96,6 +96,8 @@ Choco-Install -pkg "selenium-ie-driver"
 Choco-Install -pkg "selenium-edge-driver"
 Choco-Install -pkg "jre8"
 Choco-Install -pkg "curl"
+Choco-Install -pkg "gradle"
+Choco-Install -pkg "git.install"
 
 ########################################
 Write-Output "Download selenium jar"
