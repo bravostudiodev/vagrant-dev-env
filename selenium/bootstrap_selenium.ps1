@@ -134,8 +134,8 @@ public static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);
 
 # Again, make sure all networks belong to Private profile (same as before winrm connection was set up)
 # This is needed in case some interface are added after winrm was set up
-$networkListManager = [Activator]::CreateInstance([Type]::GetTypeFromCLSID([Guid]"{DCB00C01-570F-4A9B-8D69-199FDBA5723B}"))
-$networkListManager.GetNetworkConnections() | foreach { $_.GetNetwork().SetCategory(1) }
+# $networkListManager = [Activator]::CreateInstance([Type]::GetTypeFromCLSID([Guid]"{DCB00C01-570F-4A9B-8D69-199FDBA5723B}"))
+# $networkListManager.GetNetworkConnections() | foreach { $_.GetNetwork().SetCategory(1) }
 
 $pidSelenium = Start-Process -FilePath java -ArgumentList '-jar "C:/tools/selenium/selenium-server-standalone.jar" -port 4444' -NoNewWindow -PassThru
 $pidBravo = Start-Process -FilePath java -ArgumentList '-jar "C:/tools/selenium/selenium-bravo-servlet.jar" server 4480' -NoNewWindow -PassThru
